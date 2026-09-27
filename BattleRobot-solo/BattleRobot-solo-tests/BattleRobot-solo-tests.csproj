@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BattleRobot-solo-core\BattleRobot-solo-core.csproj" />
+      <ProjectReference Include="..\BattleRobot-solo-server\BattleRobot-solo-server.csproj" />
     </ItemGroup>
 
 </Project>
