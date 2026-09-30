@@ -25,10 +25,10 @@ public class Client : Joueur
              OuvrirFlux();
     }
 
-    public void EnvoyerAction(int action) => EnvoyerObjet(action);
-    
-    public void RejouerPartie() => EnvoyerObjet(true);
+    public void EnvoyerAction(int action) => EnvoyerByte(action);
 
-    public void QuitterPartie() => EnvoyerObjet(false);
+    public void RejouerPartie() => EnvoyerByte(1);
+
+    public void QuitterPartie() => EnvoyerByte(2);
 }
     

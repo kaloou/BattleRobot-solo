@@ -15,7 +15,11 @@ public abstract class Joueur
     private StreamWriter? _writer;
     private StreamReader? _reader;
 
-    private static readonly JsonSerializerOptions Options = new() { IncludeFields = true };
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        IncludeFields = true,
+        PropertyNameCaseInsensitive = true
+    };
 
     protected Joueur(string nom = "", int port = 0)
     {
@@ -46,5 +50,13 @@ public abstract class Joueur
     {
         string? ligne = RecevoirLigne();
         return ligne == null ? default : JsonSerializer.Deserialize<T>(ligne, Options);
+    }
+    
+    public void EnvoyerByte(int valeur) => _writer!.Write((char)valeur);
+    
+    public int? RecevoirByte()
+    {
+        int valeur = _reader!.Read();
+        return valeur == -1 ? null : valeur;
     }
 }
