@@ -84,15 +84,14 @@ public class Server : Joueur
     // Retourne false si l'action était invalide : on redemande, sans avancer le tour.
     public bool RecevoirAction()
     {
-        string? ligne = RecevoirLigne();
-        if (ligne == null)
+        int? action = RecevoirByte();
+        if (action == null)
         {
             Partie.Status = Partie.ConnexionPerdue;
             return true;
         }
 
-        int action = System.Text.Json.JsonSerializer.Deserialize<int>(ligne);
-        bool valide = VerifierAction(action, Partie.RobotClient!, Partie.RobotServeur!);
+        bool valide = VerifierAction(action.Value, Partie.RobotClient!, Partie.RobotServeur!);
 
         if (!valide)
         {
@@ -123,8 +122,7 @@ public class Server : Joueur
         if (Partie.RobotClient!.EstDetruit)
             Partie.Status = Partie.ServeurAGagne;
     }
-    // Si la connexion est coupée à ce moment, RecevoirObjet<bool>() retourne default(bool) = false = quitter.
-    public bool DemanderRejouer() => RecevoirObjet<bool>();
+    public bool DemanderRejouer() => RecevoirByte() == 1;
 
     public Server (){}
     public Server(string nom, int port) : base(nom, port)

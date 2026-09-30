@@ -25,7 +25,6 @@ while (true)
 
             while (serv.RecevoirConfigClient() == false)
             {
-                continue;
             }
             
             serv.Partie.RobotServeur = robotServeur;
