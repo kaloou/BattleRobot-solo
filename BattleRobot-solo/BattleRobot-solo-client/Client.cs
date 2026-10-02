@@ -22,7 +22,6 @@ public class Client : Joueur
 
 
              Socket.Connect(EndPoint);
-             OuvrirFlux();
     }
 
     public void EnvoyerAction(int action) => EnvoyerByte(action);

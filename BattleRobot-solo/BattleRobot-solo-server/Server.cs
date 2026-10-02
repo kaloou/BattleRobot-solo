@@ -27,7 +27,6 @@ public class Server : Joueur
         Systeme.AfficherEnAttente();
 
         Socket = socket.Accept();
-        OuvrirFlux();
     }
 
     public Robot CreerRobot(int ptVie, int ptArmor, int ptForce)
@@ -80,8 +79,7 @@ public class Server : Joueur
         return true;
     }
 
-    // Retourne true quand le tour du client est terminé (action valide, ou connexion perdue).
-    // Retourne false si l'action était invalide : on redemande, sans avancer le tour.
+
     public bool RecevoirAction()
     {
         int? action = RecevoirByte();
@@ -96,7 +94,7 @@ public class Server : Joueur
         if (!valide)
         {
             Partie.Status = Partie.ActionInvalide;
-            EnvoyerObjet(Partie); // le client doit savoir qu'il faut réessayer
+            EnvoyerObjet(Partie);
             return false;
         }
 

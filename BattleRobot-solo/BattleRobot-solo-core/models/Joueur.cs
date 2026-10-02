@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Text.Json;
 
 namespace BattleRobot.Core;
@@ -11,9 +12,6 @@ public abstract class Joueur
     public IPEndPoint? EndPoint { get; set; }
     public Socket? Socket { get; protected set; }
     public Partie Partie { get; set; } = new();
-
-    private StreamWriter? _writer;
-    private StreamReader? _reader;
 
     private static readonly JsonSerializerOptions Options = new()
     {
@@ -28,35 +26,35 @@ public abstract class Joueur
     }
 
     public abstract (int pv, int armure, int degats) ConfigRobot();
-
-    protected void OuvrirFlux()
-    {
-        var flux = new NetworkStream(Socket!);
-        _writer = new StreamWriter(flux) { AutoFlush = true };
-        _reader = new StreamReader(flux);
-    }
-
-    public void EnvoyerLigne(string ligne) => _writer!.WriteLine(ligne);
     
-    public string? RecevoirLigne() => _reader!.ReadLine();
-
     public void EnvoyerObjet<T>(T objet)
     {
-        string obj = JsonSerializer.Serialize(objet, Options);
-        EnvoyerLigne(obj);
+        string json = JsonSerializer.Serialize(objet, Options);
+        byte[] donnees = Encoding.UTF8.GetBytes(json);
+        Socket!.Send(donnees);
     }
-
+    
     public T? RecevoirObjet<T>()
     {
-        string? ligne = RecevoirLigne();
-        return ligne == null ? default : JsonSerializer.Deserialize<T>(ligne, Options);
+        byte[] buffer = new byte[4096];
+        int nbOctets = Socket!.Receive(buffer);
+        if (nbOctets == 0)
+            return default;
+
+        string json = Encoding.UTF8.GetString(buffer, 0, nbOctets);
+        return JsonSerializer.Deserialize<T>(json, Options);
     }
+
     
-    public void EnvoyerByte(int valeur) => _writer!.Write((char)valeur);
-    
+    public void EnvoyerByte(int valeur)
+    {
+        Socket!.Send(new[] { (byte)valeur });
+    }
+
     public int? RecevoirByte()
     {
-        int valeur = _reader!.Read();
-        return valeur == -1 ? null : valeur;
+        byte[] buffer = new byte[1];
+        int nbOctets = Socket!.Receive(buffer);
+        return nbOctets == 0 ? null : buffer[0];
     }
 }

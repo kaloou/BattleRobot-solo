@@ -14,7 +14,6 @@ client.SeConnecter(ip, port);
 bool rejouer;
 do
 {
-    // Boucle de configuration
     Partie? partie;
     do
     {
