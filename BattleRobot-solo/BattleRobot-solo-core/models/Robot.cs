@@ -7,12 +7,18 @@ public class Robot
     public const int CoutAttaquePuissante = 50;
     public const int GainRecharge = 50;
     public const int BonusDefenseTour = 10;
+    public const int MultiplicateurPuissante = 3;
+    public const int PasChanceParDexterite = 5;
+    public const int ChanceMin = 5;
+    public const int ChanceMax = 95;
 
     public int Pv { get; set; } = 100;
     public int Armure { get; set; } = 0;
     public int Degats { get; set; } = 10;
     public int Energie { get; set; } = 0;
     public int ArmureTemporaire { get; set; } = 0;
+    public int Dexterite { get; set; } = 0;
+    
 
     public bool EstDetruit => Pv <= 0;
     
@@ -25,12 +31,9 @@ public class Robot
         Degats = 10 + 2 * ptForce;
     }
     
-    public Robot(int pv, int armure, int degats, int energie)
+    public Robot(int ptPv, int  ptArmure, int ptForce, int ptDexterite) : this(ptPv,ptArmure,ptForce)
     {
-        Pv = pv;
-        Armure = armure;
-        Degats = degats;
-        Energie = energie;
+        Dexterite = ptDexterite;
     }
     
     public bool VerifierConfiguration()
@@ -39,9 +42,9 @@ public class Robot
         int dArmure = Armure;
         int dDegats = Degats - 10;
 
-        return dPv >= 0 && dArmure >= 0 && dDegats >= 0
+        return dPv >= 0 && dArmure >= 0 && dDegats >= 0 && Dexterite >= 0
             && dPv % 10 == 0 && dArmure % 2 == 0 && dDegats % 2 == 0
-            && dPv / 10 + dArmure / 2 + dDegats / 2 == PointsAAllouer;
+            && dPv / 10 + dArmure / 2 + dDegats / 2 + Dexterite == PointsAAllouer;
     }
     
     public bool Attaquer(Robot cible, bool puissante)
@@ -60,7 +63,7 @@ public class Robot
 
     public void SubirDegat(int degat, bool puissante = false)
     {
-        int brut = puissante ? degat * 2 : degat;
+        int brut = puissante ? degat * MultiplicateurPuissante : degat;
         Pv -= Math.Max(1, brut - (Armure + ArmureTemporaire)); // minimum 1
         ArmureTemporaire = 0;
     }
@@ -75,5 +78,27 @@ public class Robot
     public void DebutDeTour()
     {
         ArmureTemporaire = 0; 
-    } 
+    }
+
+    public int ChanceReussite(int action, Robot adversaire)
+    {
+        if (action == 4) return 100;
+
+        int baseChance = 0;
+        switch (action)
+        {
+            case 1:
+                baseChance = 75;
+                break;
+            case 2:
+                baseChance = 50;
+                break;
+            case 3:
+                baseChance = 75;
+                break;
+        }
+
+        int chance = baseChance + PasChanceParDexterite * (Dexterite - adversaire.Dexterite);
+        return Math.Clamp(chance, ChanceMin, ChanceMax);
+    }
 }

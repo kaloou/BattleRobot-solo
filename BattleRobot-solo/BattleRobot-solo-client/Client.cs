@@ -6,7 +6,7 @@ namespace BattleRobot_solo_client;
 
 public class Client : Joueur
 {
-    public override (int pv, int armure, int degats) ConfigRobot()
+    public override (int pv, int armure, int degats, int dexterite) ConfigRobot()
     {
         return Systeme.SaisirConfigRobot();
     }

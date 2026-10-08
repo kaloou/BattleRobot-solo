@@ -51,14 +51,64 @@ public class RobotTests
     }
 
     [Fact]
-    public void Attaque_puissante_coute_50_et_double_les_degats()
+    public void Attaque_puissante_coute_50_et_triple_les_degats()
     {
         var attaquant = new Robot { Energie = 50 };
         var cible = new Robot { Armure = 5 };
 
         Assert.True(attaquant.Attaquer(cible, true));
         Assert.Equal(0, attaquant.Energie);
-        Assert.Equal(85, cible.Pv); // 10*2 - 5
+        Assert.Equal(75, cible.Pv); // 10*3 - 5 = 25
+    }
+
+    [Theory]
+    [InlineData(0, 0, 0, 10)]  // tout en dextérité
+    [InlineData(3, 3, 2, 2)]   // réparti sur les 4 stats
+    public void Configuration_a_4_stats_valide_acceptee(int pv, int armure, int force, int dex)
+    {
+        Assert.True(new Robot(pv, armure, force, dex).VerifierConfiguration());
+    }
+
+    [Fact]
+    public void Configuration_a_4_stats_refusee_si_la_somme_depasse_10()
+    {
+        Assert.False(new Robot(3, 3, 2, 3).VerifierConfiguration()); // somme 11
+    }
+
+    [Theory]
+    [InlineData(1, 75)]
+    [InlineData(2, 50)]
+    [InlineData(3, 75)]
+    [InlineData(4, 100)] // la recharge réussit toujours
+    public void Chance_de_base_a_dexterite_egale(int action, int attendu)
+    {
+        Assert.Equal(attendu, new Robot().ChanceReussite(action, new Robot()));
+    }
+
+    [Fact]
+    public void Chance_augmente_avec_la_dexterite_de_lattaquant()
+    {
+        var agile = new Robot { Dexterite = 2 };
+
+        Assert.Equal(85, agile.ChanceReussite(1, new Robot())); // 75 + 5*2
+    }
+
+    [Fact]
+    public void Chance_baisse_si_ladversaire_est_plus_dexterite()
+    {
+        var lent = new Robot();
+        var agile = new Robot { Dexterite = 3 };
+
+        Assert.Equal(60, lent.ChanceReussite(1, agile)); // 75 - 5*3
+    }
+
+    [Fact]
+    public void Chance_est_bornee_entre_5_et_95()
+    {
+        var tresAgile = new Robot { Dexterite = 10 };
+
+        Assert.Equal(95, tresAgile.ChanceReussite(1, new Robot()));
+        Assert.Equal(5, new Robot().ChanceReussite(2, tresAgile));
     }
 
     [Fact]

@@ -17,7 +17,8 @@ do
     Partie? partie;
     do
     {
-        (int pv, int armure, int degats) conf = client.ConfigRobot();
+        Console.Clear();
+        (int pv, int armure, int degats, int dexterite) conf = client.ConfigRobot();
         client.EnvoyerObjet(conf);
         partie = client.RecevoirObjet<Partie>();
 
@@ -37,6 +38,7 @@ do
 
     while (client.Partie.Status == Partie.EnCours)
     {
+        Systeme.AfficherPartie(client.Partie);
         // Boucle tant que le serveur répond
         Partie? reponse;
         do
@@ -54,10 +56,11 @@ do
             {
                 Console.WriteLine("Action invalide (pas assez d'énergie ?), réessayez.");
             }
+            Console.Clear();
         } while (reponse.Status == Partie.ActionInvalide);
 
         client.Partie = reponse;
-        Systeme.AfficherPartie(client.Partie);
+        
     }
 
     Console.WriteLine(client.Partie.Status switch

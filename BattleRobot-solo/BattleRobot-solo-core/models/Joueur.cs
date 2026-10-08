@@ -25,7 +25,7 @@ public abstract class Joueur
         Port = port;
     }
 
-    public abstract (int pv, int armure, int degats) ConfigRobot();
+    public abstract (int pv, int armure, int degats, int dexterite) ConfigRobot();
     
     public void EnvoyerObjet<T>(T objet)
     {

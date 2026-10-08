@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Net.Sockets;
+using System.Reflection.PortableExecutable;
 using BattleRobot_solo_server;
 using BattleRobot.Core;
 
@@ -13,15 +14,16 @@ while (true)
 
     try
     {
-        serv.LancerHebergement();
+        serv.LancerHebergement(); // crée le socket et attend une connexion 
 
         bool rejouer;
         do
         {
-            serv.Partie = new Partie(); // nouvelle partie, même connexion
+            Console.Clear();
+            serv.Partie = new Partie(); 
 
-            (int pv, int armure, int degats) = serv.ConfigRobot();
-            Robot robotServeur = serv.CreerRobot(pv, armure, degats);
+            (int pv, int armure, int degats, int dexterite) = serv.ConfigRobot();
+            Robot robotServeur = serv.CreerRobot(pv, armure, degats, dexterite);
 
             while (serv.RecevoirConfigClient() == false)
             {
@@ -33,12 +35,15 @@ while (true)
 
             while (serv.Partie.Status == Partie.EnCours)
             {
+                Systeme.AfficherPartie(serv.Partie);
                 while (serv.RecevoirAction() == false)
                 {
                 }
                 if (serv.Partie.Status == Partie.EnCours)
                     serv.JouerTourServeur();
                 serv.EnvoyerObjet(serv.Partie);
+                
+                Console.Clear();
             }
 
             Console.WriteLine(serv.Partie.Status switch

@@ -17,5 +17,7 @@ public class Partie
 
     public bool TourServeur { get; set; } = true;
     
+    public string Message { get; set; } = "";
+    
     public Partie(){}
 }

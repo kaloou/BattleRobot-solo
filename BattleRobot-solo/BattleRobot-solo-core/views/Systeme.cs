@@ -37,17 +37,22 @@ public static class Systeme
         return ip!;
     }
 
-    public static (int pv, int armure, int degats) SaisirConfigRobot()
+    public static (int pv, int armure, int degats, int dexterite) SaisirConfigRobot()
     {
-        int total = Robot.PointsAAllouer;
-        Console.WriteLine($"Répartissez {total} points (Pv +10, Armure +2, Dégâts +2 par point).");
+        int reste = Robot.PointsAAllouer;
+        Console.WriteLine($"Répartissez {reste} points (Pv +10, Armure +2, Dégâts +2, Dextérité +1 par point).");
 
-        int pv = SaisirInt("Points en Pv", 0, total);
-        int armure = total - pv > 0 ? SaisirInt("Points en Armure", 0, total - pv) : 0;
-        int degats = total - pv - armure;
+        int pv = SaisirInt("Points en Pv", 0, reste);
+        reste -= pv;
 
-        Console.WriteLine($"Points en Dégâts : {degats} (le reste)");
-        return (pv, armure, degats);
+        int armure = reste > 0 ? SaisirInt("Points en Armure", 0, reste) : 0;
+        reste -= armure;
+
+        int degats = reste > 0 ? SaisirInt("Points en Dégâts", 0, reste) : 0;
+        reste -= degats;
+
+        Console.WriteLine($"Points en Dextérité : {reste} (le reste)");
+        return (pv, armure, degats, reste);
     }
 
     public static int JouerAction()
@@ -65,23 +70,26 @@ public static class Systeme
     // Affichage
     public static void AfficherPartie(Partie partie)
     {
+        Console.WriteLine("=======================");
         Console.WriteLine("voici la partie : ");
         AfficherRobot("Robot serveur", partie.RobotServeur);
         AfficherRobot("Robot client ", partie.RobotClient);
-        Console.WriteLine("Statut de la partie", partie.Status);
-        
+        if (!string.IsNullOrEmpty(partie.Message))
+            Console.Write(partie.Message);
+        Console.WriteLine($"Statut de la partie : {partie.Status}");
+        Console.WriteLine("=======================");
     }
 
     public static void AfficherEnAttente()
     {
-        Console.WriteLine("En attente d'une connexion...");
+        Console.WriteLine("En attente d'un joueur...");
     }
 
     private static void AfficherRobot(string titre, Robot? robot)
     {
         if (robot != null)
         {
-            Console.WriteLine($"{titre} : {robot.Pv} PV | armure {robot.Armure} | dégâts {robot.Degats} | énergie {robot.Energie}");
+            Console.WriteLine($"{titre} : {robot.Pv} PV | armure {robot.Armure} | dégâts {robot.Degats} | dextérité {robot.Dexterite} | énergie {robot.Energie}");
         }
     }
 
