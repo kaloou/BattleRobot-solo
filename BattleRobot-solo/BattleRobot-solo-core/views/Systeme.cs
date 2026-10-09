@@ -57,6 +57,7 @@ public static class Systeme
 
     public static int JouerAction()
     {
+        Console.WriteLine("=======================");
         Console.WriteLine("1 : Attaquer\n2 : Attaque puissante\n3 : Défendre\n4 : Recharger");
         return SaisirInt("Votre action", 1, 4);
     }
@@ -74,10 +75,40 @@ public static class Systeme
         Console.WriteLine("voici la partie : ");
         AfficherRobot("Robot serveur", partie.RobotServeur);
         AfficherRobot("Robot client ", partie.RobotClient);
-        if (!string.IsNullOrEmpty(partie.Message))
-            Console.Write(partie.Message);
+        if (!string.IsNullOrEmpty(partie.MessageAction))
+            Console.Write(partie.MessageAction);
         Console.WriteLine($"Statut de la partie : {partie.Status}");
         Console.WriteLine("=======================");
+
+        Console.WriteLine("""
+                           _______             _______        _______             _______
+                          |@|@|@|@|           |@|@|@|@|      |@|@|@|@|           |@|@|@|@|
+                          |@|@|@|@|   _____   |@|@|@|@|      |@|@|@|@|   _____   |@|@|@|@|
+                          |@|@|@|@| /\_T_T_/\ |@|@|@|@|      |@|@|@|@| /\_T_T_/\ |@|@|@|@|
+                          |@|@|@|@||/\ T T /\||@|@|@|@|      |@|@|@|@||/\ T T /\||@|@|@|@|
+                           ~/T~~T~||~\/~T~\/~||~T~~T\~        ~/T~~T~||~\/~T~\/~||~T~~T\~
+                            \|__|_| \(-(O)-)/ |_|__|/          \|__|_| \(-(O)-)/ |_|__|/
+                            _| _|    \\8_8//    |_ |_          _| _|    \\8_8//    |_ |_
+                          |(@)]   /~~[_____]~~\   [(@)|      |(@)]   /~~[_____]~~\   [(@)|
+                            ~    (  |       |  )    ~          ~    (  |       |  )    ~
+                                [~` ]       [ '~]                  [~` ]       [ '~]
+                                |~~|         |~~|                  |~~|         |~~|
+                                |  |         |  |                  |  |         |  |
+                               _<\/>_       _<\/>_                _<\/>_       _<\/>_
+                              /_====_\     /_====_\              /_====_\     /_====_\
+                          """
+            );
+
+        if (partie.RobotServeur == null || partie.RobotClient == null)
+            return;
+        Console.WriteLine();
+        Console.Write(new string(' ', 9));
+        EcrireBarre(partie.RobotServeur.Pv, partie.RobotServeur.PvMax);
+        Console.Write(new string(' ', 25));
+        EcrireBarre(partie.RobotClient.Pv, partie.RobotClient.PvMax);
+        Console.WriteLine();
+        Console.WriteLine($"Serveur {Math.Max(partie.RobotServeur.Pv, 0)}/{partie.RobotServeur.PvMax}".PadRight(35)
+                          + $"Client {Math.Max(partie.RobotClient.Pv, 0)}/{partie.RobotClient.PvMax}");
     }
 
     public static void AfficherEnAttente()
@@ -93,5 +124,14 @@ public static class Systeme
         }
     }
 
-   //
+    private static void EcrireBarre(int pv, int pvMax)
+    {
+        int pleines = pvMax <= 0 ? 0 : Math.Clamp((int)Math.Ceiling(pv * 10.0 / pvMax), 0, 10);
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Write(new string('█', pleines));
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.Write(new string('░', 10 - pleines));
+        Console.ResetColor();
+    }
 }

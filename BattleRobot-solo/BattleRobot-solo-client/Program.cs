@@ -34,17 +34,23 @@ do
     } while (partie.Status == Partie.ConfigInvalide);
 
     client.Partie = partie;
-    Systeme.AfficherPartie(client.Partie);
 
+    Partie? reponse = null;
     while (client.Partie.Status == Partie.EnCours)
     {
-        Systeme.AfficherPartie(client.Partie);
-        // Boucle tant que le serveur répond
-        Partie? reponse;
+        // Boucle tant que le serveur répond "action invalide".
         do
         {
+            Console.Clear();
+            Systeme.AfficherPartie(client.Partie);
+            if (reponse?.Status == Partie.ActionInvalide)
+                Console.WriteLine("Action invalide (pas assez d'énergie ?), réessayez.");
+
             int action = Systeme.JouerAction();
             client.EnvoyerAction(action);
+
+            Console.Clear();
+            Systeme.AfficherPartie(client.Partie);
             reponse = client.RecevoirObjet<Partie>();
 
             if (reponse == null)
@@ -52,17 +58,13 @@ do
                 Console.WriteLine("Serveur déconnecté.");
                 return;
             }
-            if (reponse.Status == Partie.ActionInvalide)
-            {
-                Console.WriteLine("Action invalide (pas assez d'énergie ?), réessayez.");
-            }
-            Console.Clear();
         } while (reponse.Status == Partie.ActionInvalide);
 
         client.Partie = reponse;
-        
     }
 
+    Console.Clear();
+    Systeme.AfficherPartie(client.Partie);
     Console.WriteLine(client.Partie.Status switch
     {
         Partie.ClientAGagne => "Vous avez gagné !",

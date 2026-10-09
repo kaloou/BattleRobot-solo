@@ -94,7 +94,7 @@ public class Server : Joueur
         }
         
         if (!reussi)
-            Partie.Message += $"{nom} a raté {ActionName(action)} ! Chance de réussite : {chance}%\n";
+            Partie.MessageAction += $"{nom} a raté {ActionName(action)} ! Chance de réussite : {chance}%\n";
 
         return reussi ? ResultatAction.Reussie : ResultatAction.Ratee;
     }
@@ -117,7 +117,7 @@ public class Server : Joueur
     // Tour du client. Retourne false si l'action est invalide : le client doit rejouer.
     public bool RecevoirAction()
     {
-        Partie.Message = "";
+        Partie.MessageAction = "";
 
         int? action = RecevoirByte();
         if (action == null)
@@ -150,7 +150,7 @@ public class Server : Joueur
             int action = Systeme.JouerAction();
             resultat = VerifierAction(action, Partie.RobotServeur!, Partie.RobotClient!, "Serveur");
             if (resultat == ResultatAction.Invalide)
-                Console.WriteLine("Action invalide (pas assez d'énergie ?), réessayez.");
+                Console.WriteLine("Action invalide, réessayez.");
         } while (resultat == ResultatAction.Invalide);
 
         Partie.Status = Partie.EnCours;

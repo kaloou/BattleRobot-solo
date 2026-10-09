@@ -13,6 +13,8 @@ public class Robot
     public const int ChanceMax = 95;
 
     public int Pv { get; set; } = 100;
+    
+    public int PvMax { get; set; } = 100; // just for the ascci 
     public int Armure { get; set; } = 0;
     public int Degats { get; set; } = 10;
     public int Energie { get; set; } = 0;
@@ -27,6 +29,7 @@ public class Robot
     public Robot(int ptPv, int ptArmure, int ptForce)
     {
         Pv = 100 + 10 * ptPv;
+        PvMax = Pv;
         Armure = 2 * ptArmure;
         Degats = 10 + 2 * ptForce;
     }

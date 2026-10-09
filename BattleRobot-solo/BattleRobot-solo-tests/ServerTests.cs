@@ -99,8 +99,8 @@ public class ServerTests
 
         Assert.Equal(ResultatAction.Ratee, resultat);
         Assert.Equal(100, defenseur.Pv);
-        Assert.Contains("Client a raté son attaque", server.Partie.Message);
-        Assert.Contains("75%", server.Partie.Message);
+        Assert.Contains("Client a raté son attaque", server.Partie.MessageAction);
+        Assert.Contains("75%", server.Partie.MessageAction);
     }
 
     [Fact]
